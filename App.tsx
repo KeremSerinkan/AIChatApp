@@ -13,9 +13,7 @@ function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <View>
-      <ChatScreen/>
-    </View>
+    <ChatScreen/>
   );
 }
 const styles = StyleSheet.create({

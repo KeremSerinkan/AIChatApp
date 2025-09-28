@@ -1,19 +1,20 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native'
+import { StyleSheet, Text, View, FlatList, KeyboardAvoidingView } from 'react-native'
 import React, { useState } from 'react'
 import AppHeader from '../components/AppHeader'
 import SentMessageCard from '../components/SentMessageCard'
 import ResponseMessageCard from '../components/ResponseMessageCard'
 import { s } from 'react-native-size-matters'
 import { RECEIVED, SENT } from '../constants/chat'
+import ChatInput from '../components/ChatInput'
 
-interface Message{
+interface Message {
     id: number;
     message: string;
     type: string
 }
 
 const ChatScreen = () => {
-    const messagesList : Message[] = [
+    const messagesList: Message[] = [
         {
             message: "Selamun aleykum yapay zeka kardes",
             id: 1,
@@ -30,23 +31,59 @@ const ChatScreen = () => {
             type: SENT
         }
     ]
-    const [messages, setMessages] = useState<Message[]>(messagesList)
+    const [messagesData, setMessagesData] = useState<Message[]>(messagesList)
+    const [msgInput, setMsgInput] = useState("")
+
+    const onMessageSent = () => {
+        setMessagesData(prevMessages => {
+            return [
+                ...prevMessages,
+                {
+                    message: msgInput,
+                    id: prevMessages.length + 1,
+                    type: SENT
+                }
+            ]
+        })
+
+        setTimeout(()=>{
+            onGetResponse("Cevap verdim iste oc")
+        },1000)
+    }
+
+    const onGetResponse = (response:string) => {
+        setMessagesData(prevMessages => {
+            return [
+                ...prevMessages,
+                {
+                    message: response,
+                    id: prevMessages.length + 1,
+                    type: RECEIVED
+                }
+            ]
+        })
+    }
 
     return (
-        <View>
-            <AppHeader />
-            <FlatList
-                data={messages}
-                keyExtractor={item => item.id?.toString()}
-                renderItem={({ item }) => {
-                    return item.type === SENT ?
-                        (<SentMessageCard message={item.message} />) :
-                        (<ResponseMessageCard message={item.message} />);
-                }}
+        <View style={{ flex: 1 }}>
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
+                <AppHeader />
+                <FlatList
+                    data={messagesData}
+                    keyExtractor={item => item.id?.toString()}
+                    renderItem={({ item }) => {
+                        return item.type === SENT ?
+                            (<SentMessageCard message={item.message} />) :
+                            (<ResponseMessageCard message={item.message} />);
+                    }}
 
-                contentContainerStyle={{ paddingHorizontal: s(8) }}
-            />
-
+                    contentContainerStyle={{ paddingHorizontal: s(8) }}
+                />
+                <ChatInput
+                    messageValue={msgInput}
+                    setMessageValue={setMsgInput}
+                    onMessageSent={onMessageSent} />
+            </KeyboardAvoidingView>
         </View>
     )
 }
