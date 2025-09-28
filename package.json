@@ -14,7 +14,6 @@
     "pod": "cd ios && pod install && cd ..",
     "open-xcode": "xed -b ios",
     "new-blood": "rm -rf node_modules && rm -rf yarn.lock && cd ios && rm -rf Podfile.lock && cd .. && yarn install && cd ios && pod install && cd .."
-
   },
   "dependencies": {
     "@react-native/new-app-screen": "0.81.4",
@@ -41,6 +40,7 @@
     "jest": "^29.6.3",
     "prettier": "2.8.8",
     "react-test-renderer": "19.1.0",
+    "reactotron-react-native": "^5.1.17",
     "typescript": "^5.8.3"
   },
   "engines": {
