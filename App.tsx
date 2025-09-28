@@ -1,14 +1,26 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
 
-const App = () => {
+import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+
+import ChatScreen from './src/screens/ChatScreen';
+
+function App() {
+  const isDarkMode = useColorScheme() === 'dark';
+
   return (
     <View>
-      <Text>App</Text>
+      <ChatScreen/>
     </View>
-  )
+  );
 }
+const styles = StyleSheet.create({
+  container: {
+  },
+});
 
-export default App
-
-const styles = StyleSheet.create({})
+export default App;
