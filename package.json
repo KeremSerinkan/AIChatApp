@@ -7,7 +7,14 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "both": "react-native run-ios && react-native run-android",
+    "g-c-run": "cd android && ./gradlew clean && cd .. && react-native run-android",
+    "g-clean": "cd android && ./gradlew clean && cd ..",
+    "pod": "cd ios && pod install && cd ..",
+    "open-xcode": "xed -b ios",
+    "new-blood": "rm -rf node_modules && rm -rf yarn.lock && cd ios && rm -rf Podfile.lock && cd .. && yarn install && cd ios && pod install && cd .."
+
   },
   "dependencies": {
     "@react-native/new-app-screen": "0.81.4",
