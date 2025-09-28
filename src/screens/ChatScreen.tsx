@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View, FlatList, KeyboardAvoidingView } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, View, FlatList, KeyboardAvoidingView } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import AppHeader from '../components/AppHeader'
 import SentMessageCard from '../components/SentMessageCard'
 import ResponseMessageCard from '../components/ResponseMessageCard'
-import { s } from 'react-native-size-matters'
+import { s, vs } from 'react-native-size-matters'
 import { RECEIVED, SENT } from '../constants/chat'
 import ChatInput from '../components/ChatInput'
+import EmptyChat from '../components/EmptyChat'
+import { useKeyboardState } from '../hooks/useKeyboardState'
 
 interface Message {
     id: number;
@@ -14,25 +16,21 @@ interface Message {
 }
 
 const ChatScreen = () => {
-    const messagesList: Message[] = [
-        {
-            message: "Selamun aleykum yapay zeka kardes",
-            id: 1,
-            type: SENT
-        },
-        {
-            message: "Aleykum selam insan kardes",
-            id: 2,
-            type: RECEIVED
-        },
-        {
-            message: "Keyfin yerinde mi",
-            id: 3,
-            type: SENT
-        }
-    ]
-    const [messagesData, setMessagesData] = useState<Message[]>(messagesList)
+    
+    const [messagesData, setMessagesData] = useState<Message[]>([])
     const [msgInput, setMsgInput] = useState("")
+    const flatListRef = useRef<FlatList>(null)
+    const {isKeyboardVisible,keyboardHeight} = useKeyboardState()
+
+    const scrollToBottom = () => {
+        if(flatListRef.current && messagesData.length > 0){
+            flatListRef.current?.scrollToEnd({animated:true})
+        }
+    }
+
+    useEffect(() => {
+        scrollToBottom()
+    },[messagesData,isKeyboardVisible])
 
     const onMessageSent = () => {
         setMessagesData(prevMessages => {
@@ -47,7 +45,7 @@ const ChatScreen = () => {
         })
 
         setTimeout(()=>{
-            onGetResponse("Cevap verdim iste oc")
+            onGetResponse("Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner ")
         },1000)
     }
 
@@ -69,6 +67,7 @@ const ChatScreen = () => {
             <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
                 <AppHeader />
                 <FlatList
+                    ref={flatListRef}
                     data={messagesData}
                     keyExtractor={item => item.id?.toString()}
                     renderItem={({ item }) => {
@@ -77,7 +76,10 @@ const ChatScreen = () => {
                             (<ResponseMessageCard message={item.message} />);
                     }}
 
-                    contentContainerStyle={{ paddingHorizontal: s(8) }}
+                    contentContainerStyle={{ paddingHorizontal: s(8),paddingVertical:vs(10) }}
+                    ListEmptyComponent={<EmptyChat/>}
+                    onLayout={scrollToBottom}
+                    onContentSizeChange={scrollToBottom}
                 />
                 <ChatInput
                     messageValue={msgInput}
