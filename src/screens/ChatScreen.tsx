@@ -1,4 +1,4 @@
-import { StyleSheet, View, FlatList, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, View, FlatList, KeyboardAvoidingView, Button } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import AppHeader from '../components/AppHeader'
 import SentMessageCard from '../components/SentMessageCard'
@@ -8,6 +8,7 @@ import { RECEIVED, SENT } from '../constants/chat'
 import ChatInput from '../components/ChatInput'
 import EmptyChat from '../components/EmptyChat'
 import { useKeyboardState } from '../hooks/useKeyboardState'
+import { getOpenAIResponse } from '../api/http'
 
 interface Message {
     id: number;
@@ -16,23 +17,24 @@ interface Message {
 }
 
 const ChatScreen = () => {
-    
+
     const [messagesData, setMessagesData] = useState<Message[]>([])
+    const [isLoading, setIsLoading] = useState(false)
     const [msgInput, setMsgInput] = useState("")
     const flatListRef = useRef<FlatList>(null)
-    const {isKeyboardVisible,keyboardHeight} = useKeyboardState()
+    const { isKeyboardVisible, keyboardHeight } = useKeyboardState()
 
     const scrollToBottom = () => {
-        if(flatListRef.current && messagesData.length > 0){
-            flatListRef.current?.scrollToEnd({animated:true})
+        if (flatListRef.current && messagesData.length > 0) {
+            flatListRef.current?.scrollToEnd({ animated: true })
         }
     }
 
     useEffect(() => {
         scrollToBottom()
-    },[messagesData,isKeyboardVisible])
+    }, [messagesData, isKeyboardVisible])
 
-    const onMessageSent = () => {
+    const onMessageSent = (sentMsg: string) => {
         setMessagesData(prevMessages => {
             return [
                 ...prevMessages,
@@ -44,12 +46,19 @@ const ChatScreen = () => {
             ]
         })
 
-        setTimeout(()=>{
-            onGetResponse("Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner Hello how can i help you today my owner ")
-        },1000)
+        setTimeout(() => {
+            getResFromAI(sentMsg)
+        }, 100)
     }
 
-    const onGetResponse = (response:string) => {
+    const getResFromAI = async (msg: string) => {
+        setIsLoading(true)
+        const generatedText = await getOpenAIResponse(msg)
+        onGetResponse(generatedText)
+        setIsLoading(false)
+    }
+
+    const onGetResponse = (response: string) => {
         setMessagesData(prevMessages => {
             return [
                 ...prevMessages,
@@ -62,10 +71,12 @@ const ChatScreen = () => {
         })
     }
 
+
     return (
         <View style={{ flex: 1 }}>
             <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
                 <AppHeader />
+
                 <FlatList
                     ref={flatListRef}
                     data={messagesData}
@@ -76,11 +87,16 @@ const ChatScreen = () => {
                             (<ResponseMessageCard message={item.message} />);
                     }}
 
-                    contentContainerStyle={{ paddingHorizontal: s(8),paddingVertical:vs(10) }}
-                    ListEmptyComponent={<EmptyChat/>}
+                    contentContainerStyle={{ paddingHorizontal: s(8), paddingVertical: vs(10) }}
+                    ListEmptyComponent={<EmptyChat />}
                     onLayout={scrollToBottom}
                     onContentSizeChange={scrollToBottom}
                 />
+
+                <View style={{paddingHorizontal: s(8)}}>
+                    {isLoading && <ResponseMessageCard message={"Thinking..."} />}
+                </View>
+
                 <ChatInput
                     messageValue={msgInput}
                     setMessageValue={setMsgInput}

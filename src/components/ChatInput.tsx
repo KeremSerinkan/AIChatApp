@@ -4,6 +4,7 @@ import { colors } from '../styles/colors'
 import { s, vs } from 'react-native-size-matters'
 import SendIcon from '../assets/icons/SendIcon'
 import { IS_IOS } from '../constants/platform'
+import { useKeyboardState } from '../hooks/useKeyboardState'
 
 interface IChatInputProps {
     messageValue: string;
@@ -20,8 +21,10 @@ const ChatInput: FC<IChatInputProps> = ({ messageValue, setMessageValue, onMessa
         }
     }
 
+    const {isKeyboardVisible} = useKeyboardState()
+    const paddingBottomIOSStyle = IS_IOS && { paddingBottom: isKeyboardVisible ? vs(10) : vs(20) }
     return (
-        <View style={[styles.container, IS_IOS && { paddingBottom: vs(20) }]}>
+        <View style={[styles.container, paddingBottomIOSStyle]}>
             <TextInput style={styles.input}
                 value={messageValue}
                 onChangeText={setMessageValue}
