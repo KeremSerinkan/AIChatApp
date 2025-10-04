@@ -8,7 +8,6 @@
 import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 
 import ChatScreen from './src/screens/ChatScreen';
-
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 

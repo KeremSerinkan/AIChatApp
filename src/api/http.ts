@@ -1,8 +1,6 @@
 import axios from "axios";
-import { HUGGING_FACE_KEY, OPEN_AI_KEY } from "../keys/keys";
 import { Alert } from "react-native";
-
-
+import { OPEN_AI_KEY } from "../keys/apikey";
 const openAIURL = "https://api.openai.com/v1/chat/completions"
 export const getOpenAIResponse = async (msg: string) => {
     try {
