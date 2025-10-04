@@ -76,7 +76,7 @@ const ChatScreen = () => {
         <View style={{ flex: 1 }}>
             <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
                 <AppHeader />
-
+                <Button title='asd'/>
                 <FlatList
                     ref={flatListRef}
                     data={messagesData}
